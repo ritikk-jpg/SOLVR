@@ -1,0 +1,63 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    background-color: #EBF5EE;
+    color: #09090B;
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+.font-mono {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Soft Neo-Brutalist Surfaces and Shadows */
+.neo-box {
+  background-color: #FFFFFF;
+  border: 2px solid #09090B;
+  box-shadow: 3px 3px 0px #09090B;
+}
+
+.neo-box-sm {
+  border: 2px solid #09090B;
+  box-shadow: 2px 2px 0px #09090B;
+}
+
+.neo-box-lg {
+  border: 2.5px solid #09090B;
+  box-shadow: 5px 5px 0px #09090B;
+}
+
+.neo-btn {
+  border: 2px solid #09090B;
+  box-shadow: 2.5px 2.5px 0px #09090B;
+  transition: transform 0.12s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.12s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.neo-btn:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 3.5px 3.5px 0px #09090B;
+}
+
+.neo-btn:active {
+  transform: translate(1.5px, 1.5px);
+  box-shadow: 1px 1px 0px #09090B;
+}
+
+/* Custom subtle scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #EBF5EE;
+}
+::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94A3B8;
+}

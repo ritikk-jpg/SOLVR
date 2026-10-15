@@ -1,0 +1,93 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Default deny all access
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Hardened Global Helpers
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && (
+        request.auth.token.email == 'ritikk.jpg@gmail.com' ||
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+      );
+    }
+
+    // Validation Blueprint for User profile
+    function isValidUser(data) {
+      return data.keys().hasAll(['id', 'email', 'displayName', 'role']) &&
+             data.id is string && data.id.size() <= 128 &&
+             data.email is string && data.email.size() <= 128 &&
+             data.displayName is string && data.displayName.size() <= 100 &&
+             data.role in ['worker', 'courier', 'donor', 'dispatch'] &&
+             (!('callsign' in data) || (data.callsign is string && data.callsign.size() <= 100)) &&
+             (!('district' in data) || (data.district is string && data.district.size() <= 100)) &&
+             (!('pin' in data) || (data.pin is string && data.pin.size() <= 8)) &&
+             (!('lockPassword' in data) || (data.lockPassword is string && data.lockPassword.size() <= 64)) &&
+             (!('lockType' in data) || (data.lockType in ['pin', 'password'])) &&
+             (!('autoLockOnStart' in data) || (data.autoLockOnStart is bool)) &&
+             (!('upiId' in data) || (data.upiId is string && data.upiId.size() <= 64)) &&
+             (!('roleSpecificData' in data) || (data.roleSpecificData is string && data.roleSpecificData.size() <= 200));
+    }
+
+    // Validation Blueprint for CivicTask
+    function isValidTask(data) {
+      return data.keys().hasAll(['id', 'title', 'type', 'status', 'urgency', 'district', 'baseBounty']) &&
+             data.id is string && data.id.size() <= 64 &&
+             data.title is string && data.title.size() <= 150 &&
+             data.type in ['civic_repair', 'food_rescue', 'hazard_alert'] &&
+             data.status in ['open', 'claimed', 'in_progress', 'in_review', 'completed'] &&
+             data.urgency in ['normal', 'priority', 'critical'] &&
+             data.district is string && data.district.size() <= 100 &&
+             data.baseBounty is number && data.baseBounty >= 0 &&
+             (!('description' in data) || (data.description is string && data.description.size() <= 500)) &&
+             (!('claimedBy' in data) || (data.claimedBy is string && data.claimedBy.size() <= 128));
+    }
+
+    // User Profiles Collection (PII Isolated & Owner Protected)
+    match /users/{userId} {
+      allow get: if isSignedIn() && (request.auth.uid == userId || isAdmin());
+      allow list: if isSignedIn() && (request.auth.uid == userId || isAdmin());
+      allow create: if isSignedIn() && request.auth.uid == userId && isValidId(userId) && isValidUser(incoming());
+      allow update: if isSignedIn() && request.auth.uid == userId && isValidUser(incoming()) && incoming().id == existing().id;
+      allow delete: if isAdmin();
+    }
+
+    // Civic Tasks Collection
+    match /tasks/{taskId} {
+      allow get: if isSignedIn();
+      allow list: if isSignedIn();
+      allow create: if isSignedIn() && isValidId(taskId) && isValidTask(incoming());
+      allow update: if isSignedIn() && isValidTask(incoming()) && incoming().id == existing().id;
+      allow delete: if isAdmin();
+    }
+
+    // Admin collection for RBAC
+    match /admins/{adminId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+  }
+}

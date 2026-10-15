@@ -1,0 +1,154 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile with role-based access control for Delhi civic operatives and donors",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique Firebase Auth UID",
+          "maxLength": 128
+        },
+        "email": {
+          "type": "string",
+          "description": "User email address",
+          "maxLength": 128
+        },
+        "displayName": {
+          "type": "string",
+          "description": "Operative or Donor display name",
+          "maxLength": 100
+        },
+        "role": {
+          "type": "string",
+          "description": "Active role within SOLVR",
+          "enum": ["worker", "courier", "donor", "dispatch"]
+        },
+        "callsign": {
+          "type": "string",
+          "description": "Operative callsign or organization name",
+          "maxLength": 100
+        },
+        "district": {
+          "type": "string",
+          "description": "Primary Delhi district/ward",
+          "maxLength": 100
+        },
+        "pin": {
+          "type": "string",
+          "description": "4-digit quick unlock PIN for the terminal lock screen",
+          "maxLength": 8
+        },
+        "lockPassword": {
+          "type": "string",
+          "description": "Custom alphanumeric password for lock screen unlock",
+          "maxLength": 64
+        },
+        "lockType": {
+          "type": "string",
+          "description": "Active lock security mode: pin or password",
+          "enum": ["pin", "password"]
+        },
+        "autoLockOnStart": {
+          "type": "boolean",
+          "description": "Whether app starts in locked screen mode by default"
+        },
+        "upiId": {
+          "type": "string",
+          "description": "UPI handle for civic bounties",
+          "maxLength": 64
+        },
+        "roleSpecificData": {
+          "type": "string",
+          "description": "Vehicle type, FSSAI license, or MCD badge details",
+          "maxLength": 200
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Account registration timestamp"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Last profile update timestamp"
+        }
+      },
+      "required": ["id", "email", "displayName", "role"]
+    },
+    "CivicTask": {
+      "title": "CivicTask",
+      "description": "Civic repair, food rescue, or hazard alert task in Delhi NCT",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Task identifier",
+          "maxLength": 64
+        },
+        "title": {
+          "type": "string",
+          "description": "Brief description of the task",
+          "maxLength": 150
+        },
+        "description": {
+          "type": "string",
+          "description": "Detailed task instructions",
+          "maxLength": 500
+        },
+        "type": {
+          "type": "string",
+          "description": "Classification of task",
+          "enum": ["civic_repair", "food_rescue", "hazard_alert"]
+        },
+        "status": {
+          "type": "string",
+          "description": "Current workflow state",
+          "enum": ["open", "claimed", "in_progress", "in_review", "completed"]
+        },
+        "urgency": {
+          "type": "string",
+          "description": "Priority tier",
+          "enum": ["normal", "priority", "critical"]
+        },
+        "district": {
+          "type": "string",
+          "description": "Delhi administrative region",
+          "maxLength": 100
+        },
+        "address": {
+          "type": "string",
+          "description": "Street level location",
+          "maxLength": 200
+        },
+        "baseBounty": {
+          "type": "number",
+          "description": "Reward bounty in INR"
+        },
+        "claimedBy": {
+          "type": "string",
+          "description": "UID of operative who claimed this task",
+          "maxLength": 128
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Creation timestamp"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Last status change timestamp"
+        }
+      },
+      "required": ["id", "title", "type", "status", "urgency", "district", "baseBounty"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "Individual operative and donor user profiles"
+    },
+    "/tasks/{taskId}": {
+      "schema": "CivicTask",
+      "description": "Civic maintenance and surplus food rescue missions"
+    }
+  }
+}

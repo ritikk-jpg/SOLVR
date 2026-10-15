@@ -1,0 +1,6 @@
+{
+  "summary": "Implementation plan for fixing mobile preview clutter, layout overflow, and map initialization in SOLVR. Defines a clean tabbed mobile interface (Map vs Task Feed), automatic fallback from Google Maps to Delhi Tactical Vector Radar with valid mapId, and a compact top-header role dropdown sheet.",
+  "updatedAt": "2026-10-15T06:36:07.830657120Z",
+  "requestFeedback": true,
+  "userFacing": true
+}

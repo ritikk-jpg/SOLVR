@@ -1,0 +1,6 @@
+{
+  "name": "SOLVR Delhi - Civic Logistics & Food Rescue",
+  "description": "Delhi NCT's community-driven civic maintenance, MCD/NDMC municipal micro-tasks, and surplus food rescue logistics platform with UPI streak rewards.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
